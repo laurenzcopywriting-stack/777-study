@@ -1,0 +1,735 @@
+/* ============================================================
+   777 — Designstudie im Stil „Cinematic Editorial"
+   Rezept: STILVORLAGE-Cinematic-Editorial.md, Motorik aus cinema-scroll/
+   Typo: Display-Serif / neutrale Grotesk / Mono für Daten
+   ============================================================ */
+
+/* Schriften: Instrument Serif + Inter sind vorgesehen, liegen aber noch nicht
+   lokal in fonts/. Bis dahin trägt der Fallback-Stack (ui-serif / system-ui).
+   Einbinden per @font-face, sobald die Dateien da sind — nicht über ein CDN. */
+
+:root {
+  /* Fünf Werte, mehr nicht. Abstufung nur über Transparenz. */
+  --ink: #05080c;
+  --paper: #f2ede3;
+  --paper-dim: rgba(242, 237, 227, 0.62);   /* 6,8 : 1 auf --ink */
+  --paper-soft: rgba(242, 237, 227, 0.56);  /* ≥ 4,5 : 1 — kleinste Texte */
+  --paper-faint: rgba(242, 237, 227, 0.32); /* nur Deko, nie Text */
+  --paper-line: rgba(242, 237, 227, 0.14);
+  /* EIN Akzent: Markenblau, aufgehellt für dunklen Grund.
+     8,1 : 1 auf --ink, 6,3 : 1 auf mittlerem Himmelston. Gemessen. */
+  --signal: #7fa3f5;
+
+  --shell: clamp(1.25rem, 5vw, 5rem);
+
+  /* Fluid Type an BEIDE Achsen gekoppelt — sonst läuft die Zeile auf
+     flachen Fenstern unten aus dem Bild. */
+  --display: clamp(2.6rem, min(7.2vw, 12vh), 8rem);
+  --panel: clamp(2rem, min(4.8vw, 8vh), 4.6rem);
+  --model: clamp(2.6rem, min(5.2vw, 10vh), 6rem);
+  --wing: clamp(4.5rem, min(16vw, 26vh), 15rem);
+  --figure: clamp(2.2rem, min(4.6vw, 8vh), 4rem);
+  --body: clamp(1rem, 1.1vw, 1.15rem);
+
+  --serif: 'Instrument Serif', ui-serif, 'Iowan Old Style', Georgia, serif;
+  --sans: 'Inter', system-ui, -apple-system, 'Helvetica Neue', Arial, sans-serif;
+  --mono: ui-monospace, 'SF Mono', 'JetBrains Mono', Menlo, Consolas, monospace;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  /* Kein scroll-behavior: smooth — kollidiert mit ScrollSmoother. */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--ink);
+  color: var(--paper);
+  font-family: var(--sans);
+  font-size: var(--body);
+  font-weight: 400;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+a {
+  color: var(--paper);
+  text-decoration-color: var(--signal);
+  text-underline-offset: 0.25em;
+  text-decoration-thickness: 1px;
+}
+
+a:hover {
+  color: var(--signal);
+}
+
+:focus-visible {
+  outline: 2px solid var(--signal);
+  outline-offset: 4px;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.skip {
+  position: fixed;
+  top: 0.75rem;
+  left: 0.75rem;
+  z-index: 50;
+  padding: 0.5rem 0.9rem;
+  background: var(--paper);
+  color: var(--ink);
+  font-size: 0.85rem;
+  transform: translateY(-200%);
+}
+
+.skip:focus {
+  transform: none;
+}
+
+/* --- Kicker: winzig, weit gesperrt, im Akzent ----------------- */
+
+.kicker {
+  margin: 0 0 1.4rem;
+  color: var(--signal);
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+}
+
+/* --- Wort-Masken ------------------------------------------------
+   Kasten mit overflow: hidden, das Wort fährt von unten herein.
+   Startwerte setzt AUSSCHLIESSLICH GSAP, nie dieses CSS. */
+
+.mask {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: top;
+  /* Platz für Unterlängen, sonst schneidet die Maske g/p/y ab */
+  padding-bottom: 0.08em;
+  margin-bottom: -0.08em;
+}
+
+.word {
+  display: inline-block;
+  will-change: transform;
+}
+
+.word--accent {
+  color: var(--signal);
+  font-style: italic;
+}
+
+/* --- Bühne: Bildsequenz, fixiert ------------------------------ */
+
+.stage {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: var(--ink);
+}
+
+.stage__canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* Funktionale Abdunklung für Lesbarkeit, keine Deko: nur Ink, kein Farbton.
+   Die Deckkraft steuert die Choreografie über --scrim. */
+.stage__scrim {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(90deg, rgba(5, 8, 12, 0.72) 0%, rgba(5, 8, 12, 0.18) 55%, rgba(5, 8, 12, 0) 100%),
+    linear-gradient(0deg, rgba(5, 8, 12, 0.85) 0%, rgba(5, 8, 12, 0) 38%);
+  opacity: var(--scrim, 1);
+}
+
+#smooth-wrapper {
+  position: relative;
+  z-index: 1;
+}
+
+main > section {
+  position: relative;
+  z-index: 2;
+}
+
+/* --- Fortschritt & Kopfzeile ---------------------------------- */
+
+.progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 20;
+  height: 2px;
+  background: var(--paper-line);
+}
+
+.progress__fill {
+  height: 100%;
+  background: var(--signal);
+  transform: scaleX(0);
+  transform-origin: left center;
+}
+
+.chrome {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 15;
+  display: flex;
+  align-items: baseline;
+  gap: 1.1rem;
+  padding: 1.6rem var(--shell) 2.6rem;
+  pointer-events: none;
+  /* Funktional: Inhalte, die darunter durchlaufen, verschwinden im Grund. */
+  background: linear-gradient(rgba(5, 8, 12, 0.82), rgba(5, 8, 12, 0));
+}
+
+.chrome__mark {
+  font-family: var(--serif);
+  font-size: 1.5rem;
+  line-height: 1;
+  letter-spacing: -0.01em;
+}
+
+.chrome__sub {
+  color: var(--paper-soft);
+  font-size: 0.7rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
+.chrome__tag {
+  margin-left: auto;
+  color: var(--paper-soft);
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* --- 1 · Hero --------------------------------------------------- */
+
+.hero {
+  min-height: 100vh;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 0 var(--shell) clamp(4.5rem, 12vh, 8rem);
+}
+
+.hero__title {
+  max-width: 13ch;
+  margin: 0;
+  font-family: var(--serif);
+  font-size: var(--display);
+  font-weight: 400;
+  line-height: 0.95;
+  letter-spacing: -0.025em;
+}
+
+.hero__meta {
+  max-width: 40ch;
+  margin: 2rem 0 0;
+  color: var(--paper-dim);
+}
+
+.hero__cue {
+  position: absolute;
+  right: var(--shell);
+  bottom: clamp(4.5rem, 12vh, 8rem);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.8rem;
+  color: var(--paper-soft);
+  font-size: 0.66rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+}
+
+.hero__cue-line {
+  width: 1px;
+  height: 3.5rem;
+  background: linear-gradient(var(--paper-faint), transparent);
+}
+
+/* JS-Seite: Auftritt wartet auf GSAP. Ohne Skript bleibt alles sichtbar. */
+.js .hero__inner,
+.js .hero__cue {
+  visibility: hidden;
+}
+
+/* --- 2 · Kapitel (gepinnt) ------------------------------------ */
+
+.chapter__stage {
+  position: relative;
+  height: 100vh;
+  height: 100svh;
+}
+
+.panel {
+  position: absolute;
+  left: var(--shell);
+  bottom: clamp(4.5rem, 14vh, 9rem);
+  max-width: min(46rem, calc(100vw - 2 * var(--shell)));
+}
+
+.panel__index {
+  display: block;
+  margin-bottom: 1.3rem;
+  color: var(--signal);
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.panel__title {
+  max-width: 17ch;
+  margin: 0;
+  font-family: var(--serif);
+  font-size: var(--panel);
+  font-weight: 400;
+  line-height: 0.98;
+  letter-spacing: -0.02em;
+}
+
+.panel__rule {
+  display: block;
+  width: 4.5rem;
+  height: 1px;
+  margin: 1.8rem 0 1.4rem;
+  background: var(--signal);
+  transform-origin: left center;
+}
+
+.panel__body {
+  max-width: 42ch;
+  margin: 0;
+  color: var(--paper-dim);
+}
+
+/* Ohne Pin (kein JS / reduzierte Bewegung) stehen die Panels untereinander. */
+.no-pin .chapter__stage {
+  height: auto;
+  padding: 10vh 0;
+}
+
+.no-pin .panel {
+  position: relative;
+  left: auto;
+  bottom: auto;
+  padding: 0 var(--shell);
+  margin-bottom: 18vh;
+}
+
+/* --- 3 · Familie (horizontale Passage) ------------------------ */
+
+.family__stage {
+  height: 100vh;
+  height: 100svh;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+}
+
+.family__track {
+  display: flex;
+  align-items: flex-end;
+  gap: clamp(3rem, 8vw, 9rem);
+  padding: 0 var(--shell);
+  will-change: transform;
+}
+
+.family__intro {
+  flex: 0 0 auto;
+  width: min(30rem, 80vw);
+}
+
+.family__heading {
+  margin: 0;
+  font-family: var(--serif);
+  font-size: var(--panel);
+  font-weight: 400;
+  line-height: 0.98;
+  letter-spacing: -0.02em;
+}
+
+.family__body {
+  max-width: 34ch;
+  margin: 1.6rem 0 0;
+  color: var(--paper-dim);
+}
+
+.model {
+  flex: 0 0 auto;
+  width: clamp(19rem, 34vw, 32rem);
+  padding-top: 1.6rem;
+  border-top: 1px solid var(--paper-line);
+}
+
+.model__status {
+  display: inline-block;
+  color: var(--paper-soft);
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.model__status::before {
+  content: '';
+  display: inline-block;
+  width: 0.45rem;
+  height: 0.45rem;
+  margin-right: 0.6rem;
+  border-radius: 50%;
+  background: var(--paper);
+  vertical-align: 0.05em;
+}
+
+.model__status--open::before {
+  background: transparent;
+  box-shadow: inset 0 0 0 1px var(--signal);
+}
+
+.model__name {
+  margin: 1.4rem 0 0.8rem;
+  font-family: var(--serif);
+  font-size: var(--model);
+  font-weight: 400;
+  line-height: 0.9;
+  letter-spacing: -0.03em;
+  white-space: nowrap;
+}
+
+.model__line {
+  max-width: 26ch;
+  margin: 0 0 1.8rem;
+  color: var(--paper-dim);
+}
+
+.model__specs {
+  display: grid;
+  grid-template-columns: repeat(3, auto);
+  justify-content: start;
+  gap: 1.6rem;
+  margin: 0;
+}
+
+.model__specs dt {
+  margin-bottom: 0.35rem;
+  color: var(--paper-soft);
+  font-size: 0.66rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.model__specs dd {
+  margin: 0;
+  font-family: var(--mono);
+  font-size: 0.95rem;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Unter 860 px läuft die Passage nicht — die Spur wird zur Liste. */
+@media (max-width: 859px) {
+  .family__stage {
+    height: auto;
+    display: block;
+    overflow: visible;
+    padding: 14vh 0;
+  }
+
+  .family__track {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 4.5rem;
+  }
+
+  .family__intro,
+  .model {
+    width: auto;
+  }
+}
+
+/* --- 4 · Flügel (Höhepunkt) ------------------------------------ */
+
+.wing {
+  padding: 0 var(--shell);
+}
+
+.wing__block {
+  min-height: 100vh;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.wing__block--b {
+  max-width: 40rem;
+}
+
+.wing__block--c {
+  /* Oben rechts, über der Spitze — die Zahl darf den Höhepunkt nicht verdecken. */
+  justify-content: flex-start;
+  align-items: flex-end;
+  padding-top: 14vh;
+  text-align: right;
+}
+
+.wing__figure {
+  margin: 0;
+  font-family: var(--serif);
+  font-size: var(--wing);
+  font-weight: 400;
+  line-height: 0.85;
+  letter-spacing: -0.04em;
+  font-variant-numeric: tabular-nums;
+}
+
+.wing__unit {
+  margin-left: 0.12em;
+  color: var(--signal);
+  font-size: 0.32em;
+  letter-spacing: 0;
+}
+
+.wing__label {
+  margin: 1.2rem 0 0;
+  color: var(--paper-dim);
+  font-size: 0.75rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+}
+
+.wing__heading {
+  max-width: 16ch;
+  margin: 0 0 1.8rem;
+  font-family: var(--serif);
+  font-size: var(--panel);
+  font-weight: 400;
+  line-height: 0.98;
+  letter-spacing: -0.02em;
+}
+
+.wing__body {
+  max-width: 44ch;
+  margin: 0;
+  color: var(--paper-dim);
+}
+
+/* --- 5 · Zahlen ------------------------------------------------- */
+
+.figures {
+  padding: 22vh var(--shell) 18vh;
+}
+
+.figures__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(15rem, 100%), 1fr));
+  gap: 3.5rem clamp(2rem, 4vw, 4rem);
+}
+
+.figure {
+  padding-top: 1.4rem;
+  border-top: 1px solid var(--paper-line);
+}
+
+.figure__value {
+  display: block;
+  font-family: var(--serif);
+  font-size: var(--figure);
+  line-height: 1;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.figure__unit {
+  margin-left: 0.18em;
+  color: var(--signal);
+  font-size: 0.42em;
+  letter-spacing: 0.02em;
+}
+
+.figure__label {
+  display: block;
+  max-width: 28ch;
+  margin-top: 0.9rem;
+  color: var(--paper-dim);
+  font-size: 0.92rem;
+  line-height: 1.5;
+}
+
+.figures__note {
+  max-width: 60ch;
+  margin: 3rem 0 0;
+  color: var(--paper-soft);
+  font-size: 0.78rem;
+}
+
+/* --- 6 · Specs (zweite Ebene) ---------------------------------- */
+
+.specs {
+  padding: 12vh var(--shell) 16vh;
+}
+
+.specs__heading {
+  margin: 0 0 3rem;
+  font-family: var(--serif);
+  font-size: var(--panel);
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+.specs__scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.specs__table {
+  width: 100%;
+  min-width: 46rem;
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+}
+
+.specs__table th,
+.specs__table td {
+  padding: 1rem 1.2rem 1rem 0;
+  border-bottom: 1px solid var(--paper-line);
+  text-align: left;
+  vertical-align: baseline;
+}
+
+.specs__table thead th {
+  font-family: var(--serif);
+  font-size: 1.6rem;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+}
+
+.specs__table tbody th {
+  color: var(--paper-soft);
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.specs__table td {
+  font-family: var(--mono);
+  font-size: 0.9rem;
+}
+
+.specs__table thead th,
+.specs__table td {
+  white-space: nowrap;
+}
+
+.specs__note {
+  max-width: 60ch;
+  margin: 2rem 0 0;
+  color: var(--paper-soft);
+  font-size: 0.8rem;
+}
+
+/* --- 7 · Ausklang ----------------------------------------------- */
+
+.outro {
+  min-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0 var(--shell);
+}
+
+.outro__title {
+  max-width: 14ch;
+  margin: 0;
+  font-family: var(--serif);
+  font-size: var(--display);
+  font-weight: 400;
+  line-height: 0.95;
+  letter-spacing: -0.025em;
+}
+
+.outro__note {
+  margin: 2.4rem 0 0;
+  color: var(--paper-dim);
+}
+
+.colophon {
+  position: relative;
+  z-index: 2;
+  padding: 3rem var(--shell) 3.5rem;
+  border-top: 1px solid var(--paper-line);
+  color: var(--paper-soft);
+  font-size: 0.75rem;
+  line-height: 1.6;
+}
+
+.colophon p {
+  max-width: 80ch;
+  margin: 0 0 0.4rem;
+}
+
+/* --- Reduzierte Bewegung --------------------------------------
+   Choreografie aus, Endzustände stehen hier im CSS — sonst bliebe die
+   Seite für genau diese Nutzer leer. */
+@media (prefers-reduced-motion: reduce) {
+  .js .hero__inner,
+  .js .hero__cue {
+    visibility: visible;
+  }
+
+  .word {
+    transform: none !important;
+  }
+}
+
+@media (max-width: 859px) {
+  /* Hochformat: die Flügelspitze steht oben im Bild, der Text rückt nach
+     unten aus dem Weg. */
+  .wing__block--b {
+    justify-content: flex-end;
+    padding-bottom: 14vh;
+  }
+}
+
+@media (max-width: 640px) {
+  .chrome__sub {
+    display: none;
+  }
+
+  .hero__cue {
+    display: none;
+  }
+}

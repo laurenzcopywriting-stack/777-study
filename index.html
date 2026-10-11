@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>777 Family — Design Study</title>
+  <meta name="description" content="Independent design study of a long-haul aircraft family page. Not affiliated with or endorsed by the manufacturer.">
+  <meta name="robots" content="noindex">
+  <link rel="stylesheet" href="css/styles.css">
+  <script>document.documentElement.classList.add('js')</script>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+
+  <!-- Alles Fixierte liegt AUSSERHALB von #smooth-wrapper. ScrollSmoother
+       transformiert den Content — position: fixed würde darin mitwandern. -->
+  <div class="stage" aria-hidden="true">
+    <canvas class="stage__canvas"></canvas>
+    <div class="stage__scrim"></div>
+  </div>
+
+  <div class="progress" aria-hidden="true"><div class="progress__fill"></div></div>
+
+  <header class="chrome">
+    <span class="chrome__mark">777</span>
+    <span class="chrome__sub">Long-haul family</span>
+    <span class="chrome__tag">Design study</span>
+  </header>
+
+  <div id="smooth-wrapper">
+    <div id="smooth-content">
+      <main id="main">
+
+        <!-- 1 — Auftakt ------------------------------------------------ -->
+        <section class="hero" data-section="hero">
+          <div class="hero__inner">
+            <p class="kicker hero__kicker">The 777 family</p>
+            <h1 class="hero__title masked" data-accent="2">Two engines. Any ocean.</h1>
+            <p class="hero__meta">Reach your farthest markets with the economy of two engines. Backed by three decades in service.</p>
+          </div>
+          <div class="hero__cue" aria-hidden="true">
+            <span>Explore</span>
+            <span class="hero__cue-line"></span>
+          </div>
+        </section>
+
+        <!-- 2 — Herkunft, gepinnt ------------------------------------- -->
+        <section class="chapter" data-section="chapter" aria-label="Why the 777">
+          <div class="chapter__stage">
+            <article class="panel">
+              <span class="panel__index">01 — Since 1994</span>
+              <h2 class="panel__title masked">Proven before you fly&nbsp;it.</h2>
+              <span class="panel__rule"></span>
+              <p class="panel__body">First flight in June 1994, passenger service since 1995. Three decades of crews, data and maintenance experience come with every aircraft.</p>
+            </article>
+            <article class="panel">
+              <span class="panel__index">02 — ETOPS</span>
+              <h2 class="panel__title masked">The direct line across any&nbsp;ocean.</h2>
+              <span class="panel__rule"></span>
+              <p class="panel__body">The first airliner cleared for 180-minute twin-engine operations from day one, now approved for up to 330 minutes. More direct routings over open water, on the fuel bill of two engines.</p>
+            </article>
+            <article class="panel">
+              <span class="panel__index">03 — Fleet</span>
+              <h2 class="panel__title masked">Already at home where you&nbsp;fly.</h2>
+              <span class="panel__rule"></span>
+              <p class="panel__body">1,794 aircraft delivered to airlines on every inhabited continent. Wherever your network goes, crews, spares and support are already there.</p>
+            </article>
+          </div>
+        </section>
+
+        <!-- 3 — Die Familie, horizontale Passage --------------------- -->
+        <section class="family" data-section="family" aria-labelledby="family-heading">
+          <div class="family__stage">
+            <div class="family__track">
+              <div class="family__intro">
+                <p class="kicker">The family</p>
+                <h2 class="family__heading" id="family-heading">The right size for every long-haul mission.</h2>
+                <p class="family__body">Passengers or freight, today’s fleet or the next generation: one shared design, so your fleet can grow without starting over.</p>
+              </div>
+
+              <article class="model">
+                <span class="model__status">In service</span>
+                <h3 class="model__name">777-300ER</h3>
+                <p class="model__line">Large-cabin capacity and the reliability record the next generation builds on.</p>
+                <dl class="model__specs">
+                  <div><dt>Seats</dt><dd>350–425</dd></div>
+                  <div><dt>Range</dt><dd>7,500 nmi</dd></div>
+                  <div><dt>Length</dt><dd>73.9 m</dd></div>
+                </dl>
+              </article>
+
+              <article class="model">
+                <span class="model__status">In service</span>
+                <h3 class="model__name">777F</h3>
+                <p class="model__line">Carry 107 tonnes up to 5,000 nautical miles. The large freighter the industry runs on.</p>
+                <dl class="model__specs">
+                  <div><dt>Payload</dt><dd>107 t</dd></div>
+                  <div><dt>Range</dt><dd>5,000 nmi</dd></div>
+                  <div><dt>Length</dt><dd>63.7 m</dd></div>
+                </dl>
+              </article>
+
+              <article class="model">
+                <span class="model__status model__status--open">In certification</span>
+                <h3 class="model__name">777-9</h3>
+                <p class="model__line">Up to 450 seats, with 20&nbsp;% lower fuel use than the aircraft it replaces.</p>
+                <dl class="model__specs">
+                  <div><dt>Seats</dt><dd>375–450</dd></div>
+                  <div><dt>Range</dt><dd>8,000 nmi</dd></div>
+                  <div><dt>Length</dt><dd>76.7 m</dd></div>
+                </dl>
+              </article>
+
+              <article class="model">
+                <span class="model__status model__status--open">In development</span>
+                <h3 class="model__name">777-8F</h3>
+                <p class="model__line">118 tonnes on the new wing and GE9X engines. More freight on every flight.</p>
+                <dl class="model__specs">
+                  <div><dt>Payload</dt><dd>118 t</dd></div>
+                  <div><dt>Range</dt><dd>5,000 nmi</dd></div>
+                  <div><dt>Length</dt><dd>70.9 m</dd></div>
+                </dl>
+              </article>
+            </div>
+          </div>
+        </section>
+
+        <!-- 4 — Höhepunkt: der Flügel --------------------------------- -->
+        <section class="wing" data-section="wing" aria-labelledby="wing-heading">
+          <div class="wing__block wing__block--a">
+            <p class="kicker">777X · Folding wingtips</p>
+            <p class="wing__figure"><span class="wing__value">64.8</span><span class="wing__unit">m</span></p>
+            <p class="wing__label">At the gate.</p>
+          </div>
+          <div class="wing__block wing__block--b">
+            <h2 class="wing__heading masked" id="wing-heading">A longer wing for the sky. The gates you already&nbsp;have.</h2>
+            <p class="wing__body">In flight, the long composite wing is where the 777X finds its efficiency. On the ground, the tips fold up and it fits the same gates as today’s 777, with no new airport infrastructure. The first commercial airliner to do this.</p>
+          </div>
+          <div class="wing__block wing__block--c">
+            <p class="wing__figure"><span class="wing__value">71.8</span><span class="wing__unit">m</span></p>
+            <p class="wing__label">In the air.</p>
+          </div>
+        </section>
+
+        <!-- 5 — Zahlen ------------------------------------------------ -->
+        <section class="figures" data-section="figures" aria-labelledby="figures-heading">
+          <p class="kicker" id="figures-heading">In numbers</p>
+          <div class="figures__grid">
+            <div class="figure">
+              <span class="figure__value" data-value="1794" data-decimals="0">1,794</span>
+              <span class="figure__label">aircraft delivered across all variants, as of August&nbsp;2026</span>
+            </div>
+            <div class="figure">
+              <span class="figure__value" data-value="20" data-suffix=" %" data-decimals="0">20<span class="figure__unit">%</span></span>
+              <span class="figure__label">lower fuel use and emissions with the 777-9</span>
+            </div>
+            <div class="figure">
+              <span class="figure__value" data-value="10" data-suffix=" %" data-decimals="0">10<span class="figure__unit">%</span></span>
+              <span class="figure__label">lower operating costs than the competition</span>
+            </div>
+            <div class="figure">
+              <span class="figure__value" data-value="40" data-suffix=" %" data-decimals="0">40<span class="figure__unit">%</span></span>
+              <span class="figure__label">smaller noise footprint for the communities around your airports</span>
+            </div>
+          </div>
+          <p class="figures__note">777X figures as stated by the manufacturer, compared with the aircraft it replaces and with the competition.</p>
+        </section>
+
+        <!-- 6 — Im Detail (zweite Ebene) ------------------------------- -->
+        <section class="specs" data-section="specs" aria-labelledby="specs-heading">
+          <div class="specs__head">
+            <p class="kicker">In detail</p>
+            <h2 class="specs__heading" id="specs-heading">Technical specifications</h2>
+          </div>
+          <div class="specs__scroll" tabindex="0" role="region" aria-labelledby="specs-heading">
+            <table class="specs__table">
+              <thead>
+                <tr>
+                  <th scope="col"><span class="visually-hidden">Specification</span></th>
+                  <th scope="col">777-300ER</th>
+                  <th scope="col">777F</th>
+                  <th scope="col">777-8</th>
+                  <th scope="col">777-9</th>
+                  <th scope="col">777-8F</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><th scope="row">Status</th><td>In service</td><td>In service</td><td>In development</td><td>In certification</td><td>In development</td></tr>
+                <tr><th scope="row">Seats (two-class)</th><td>350–425</td><td>—</td><td>350–425</td><td>375–450</td><td>—</td></tr>
+                <tr><th scope="row">Payload</th><td>—</td><td>107 t</td><td>—</td><td>—</td><td>118 t</td></tr>
+                <tr><th scope="row">Range</th><td>7,500 nmi</td><td>5,000 nmi</td><td>9,500 nmi</td><td>8,000 nmi</td><td>5,000 nmi</td></tr>
+                <tr><th scope="row">Length</th><td>73.9 m</td><td>63.7 m</td><td>70.9 m</td><td>76.7 m</td><td>70.9 m</td></tr>
+                <tr><th scope="row">Wingspan</th><td>64.8 m</td><td>64.8 m</td><td>71.8 m / 64.8 m</td><td>71.8 m / 64.8 m</td><td>71.8 m / 64.8 m</td></tr>
+                <tr><th scope="row">Engine</th><td>GE90</td><td>GE90</td><td>GE9X</td><td>GE9X</td><td>GE9X</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="specs__note">777X wingspan shown extended / folded on the ground. Freighter range at 107 t (777F) and 110 t (777-8F) payload. Figures as published by the manufacturer, October 2026.</p>
+        </section>
+
+        <!-- 7 — Ausklang ---------------------------------------------- -->
+        <section class="outro" data-section="outro">
+          <h2 class="outro__title masked" data-accent="1">Where will your network go next?</h2>
+          <p class="outro__note">Let’s look at your routes together.</p>
+        </section>
+
+        <footer class="colophon">
+          <p>Independent design study. Not affiliated with, sponsored or endorsed by the aircraft manufacturer. Product names are trademarks of their respective owners.</p>
+          <p>Specifications as published by the manufacturer (October 2026). Imagery is AI-generated and does not show a real aircraft.</p>
+        </footer>
+      </main>
+    </div>
+  </div>
+
+  <script src="vendor/gsap.min.js"></script>
+  <script src="vendor/ScrollTrigger.min.js"></script>
+  <script src="vendor/ScrollSmoother.min.js"></script>
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
